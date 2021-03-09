@@ -1,0 +1,33 @@
+#!groovy
+
+currentBuild.displayName="Online-image-#"+currentBuild.number
+pipeline {
+   agent any 
+   environment {
+       PATH="/opt/maven/bin:$PATH"
+               }
+   stages{
+       stage("SCM checkout") {
+           steps {
+               git credentialsId "https://github.com/lanru2001/my-web-page.git"
+                  }
+               }
+           
+       stage("Maven Build") {
+           steps {
+               sh "mvn clean package"  
+                 
+                 }
+              }
+       stage("Deploy-Dev"){
+           steps{
+               sshagent(){
+                   sh "scp -o StrictHostKeyChecking=no webapp/target/webapp.war  ec2-user@18.221.190.93:/opt/tomcat/webapps/"
+                           
+              }
+           }
+       }       
+              
+    }     
+}
+
