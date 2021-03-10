@@ -56,3 +56,29 @@ variable "private-subnets" {
   type = list
   default = ["10.0.4.0/24" , "10.0.5.0/24" , "10.0.6.0/24" ]
 }
+variable "account_name" {
+  default = "lanru2001"
+}
+
+variable "github_org" {
+  default = "lanru2001"
+}
+
+variable "github_token" {
+}
+
+variable "project" {
+	default = "terraform-codepipeline-example"
+}
+
+variable "app" {
+	default = "terraform-codepipeline-example"
+}
+
+variable "account_id" {
+}
+
+variable "docker_build_image" {
+  default = "centos"
+}
+
