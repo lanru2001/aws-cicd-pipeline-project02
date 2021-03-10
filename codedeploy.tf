@@ -19,15 +19,15 @@ resource "aws_codedeploy_deployment_group" "app_deploy" {
   deployment_config_name = aws_codedeploy_deployment_config.app_deploy.id
 
   ec2_tag_filter {
-    key   = "filterkey"
+    key   = local.tag["key"]
     type  = "KEY_AND_VALUE"
-    value = "filtervalue"
+    value =local.tag["key"]  
   }
   
   ec2_tag_set {
-    key   = "filterkey"
+    key   = local.tag[ "key" ]    
     type  = "KEY_AND_VALUE"
-    value = "filtervalue"    
+    value = local.tag ["key" ]
     
   }
   
