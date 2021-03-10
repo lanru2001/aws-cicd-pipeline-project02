@@ -82,3 +82,17 @@ variable "docker_build_image" {
   default = "centos"
 }
 
+variable "repository_branch" {
+  description = "Repository branch to connect to"
+  default     = "develop"
+}
+
+variable "repository_owner" {
+  description = "GitHub repository owner"
+  default     = "stojce"
+}
+
+variable "repository_name" {
+  description = "GitHub repository name"
+  default     = "static-web-example"
+}
