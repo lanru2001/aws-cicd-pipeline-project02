@@ -76,25 +76,26 @@ variable "app" {
 }
 
 variable "account_id" {
+
 }
 
 variable "docker_build_image" {
-  default = "centos"
+  default = "Amazon Linux 2"
 }
 
 variable "repository_branch" {
   description = "Repository branch to connect to"
-  default     = "develop"
+  default     = "github.com/lanru2001/aws-cicd-pipeline-project02/edit/main"
 }
 
 variable "repository_owner" {
   description = "GitHub repository owner"
-  default     = "stojce"
+  default     = "lanru2001"
 }
 
 variable "repository_name" {
   description = "GitHub repository name"
-  default     = "static-web-example"
+  default     = "https://github.com/lanru2001/aws-cicd-pipeline-project02/edit/main"
 }
 
 variable "group_name" {
