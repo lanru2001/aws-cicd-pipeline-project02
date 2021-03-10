@@ -104,3 +104,9 @@ variable "group_name" {
 variable "project" {
   default = "web-app-project"
 }
+
+variable "create" {
+  description = "Whether to create a resource"
+  type        = bool
+  default     = true
+}
