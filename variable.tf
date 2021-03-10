@@ -68,11 +68,11 @@ variable "github_token" {
 }
 
 variable "project" {
-	default = "terraform-codepipeline-example"
+	default = "terraform-codepipeline-project"
 }
 
 variable "app" {
-	default = "terraform-codepipeline-example"
+	default = "terraform-codepipeline-app"
 }
 
 variable "account_id" {
@@ -96,6 +96,7 @@ variable "repository_name" {
   description = "GitHub repository name"
   default     = "static-web-example"
 }
+
 variable "group_name" {
 	default = "ec2_deployment"
 }
