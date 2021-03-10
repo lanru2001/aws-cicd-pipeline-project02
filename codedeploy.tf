@@ -26,8 +26,8 @@ resource "aws_codedeploy_deployment_group" "app_deploy" {
 
   trigger_configuration {
     trigger_events     = ["DeploymentFailure"]
-    trigger_name       = "foo-trigger"
-    trigger_target_arn = "foo-topic-arn"
+    trigger_name       = "app_deploy-trigger"
+    trigger_target_arn = "app_deploy-topic-arn"
   }
 
   auto_rollback_configuration {
