@@ -63,7 +63,7 @@ variable "github_org" {
 }
 
 variable "github_token" {
-  default = ""	
+  default = "878ca43d053c5a5680c1ad9af1941aee37e04fc0"	
 }
 
 variable "project" {
