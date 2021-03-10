@@ -244,6 +244,15 @@ resource "aws_autoscaling_group" "my_autoscaling_group" {
     # allows deleting the autoscaling group without waiting
     # for all instances in the pool to terminate
     force_delete = true
+  
+    dynamic "tag" {
+    for_each = local.tags
+    content {
+      key                 = tag.value["key"]
+      value               = tag.value["value"]
+      propagate_at_launch = tag.value["propagate_at_launch"]
+      }
+    }  
 
     launch_configuration = aws_launch_configuration.my_launch_configuration.id
     vpc_zone_identifier = [
