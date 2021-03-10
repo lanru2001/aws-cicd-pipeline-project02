@@ -27,8 +27,13 @@ resource "aws_codebuild_project" "project" {
   }  
   
   artifacts {
-    type = "CODEPIPELINE"
+    type = "NO_ARTIFACTS"
   }
+  
+  cache {
+    type     = "S3"
+    location = aws_s3_bucket.example.bucket
+  }  
   
   logs_config {
     cloudwatch_logs {
