@@ -1,6 +1,5 @@
-resource "aws_iam_role" "build_pipeline_role" {
-  name = "build-pipeline-role"
-
+resource "aws_iam_role" "build_role" {
+  name               = "build-role"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -10,7 +9,8 @@ resource "aws_iam_role" "build_pipeline_role" {
       "Principal": {
         "Service": [
           "codebuild.amazonaws.com",
-          "codepipeline.amazonaws.com"
+          "codedeploy.amazonaws.com"
+          
         ]
       },
       "Action": "sts:AssumeRole"
@@ -24,47 +24,133 @@ resource "aws_iam_policy" "codebuild_policy" {
   name        = "codebuild-policy"
   path        = "/service-role/"
   description = "Policy used in trust relationship with CodeBuild"
-  role = aws_iam_role.build_pipeline_role.id
-  policy = <<POLICY
+  policy      = <<POLICY
+{
+	"Version": "2012-10-17",
+	"Statement": [{
+			"Effect": "Allow",
+			"Resource": [
+				"arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws/codebuild/*"
+			],
+			"Action": [
+				"logs:CreateLogGroup",
+				"logs:CreateLogStream",
+				"logs:PutLogEvents"
+                               
+			]
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"s3:PutObject",
+				"s3:GetObject",
+				"s3:GetObjectVersion",
+				"s3:GetBucketAcl",
+				"s3:GetBucketLocation"
+			],
+			"Resource": [
+				"*"
+			]
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"codebuild:CreateReportGroup",
+				"codebuild:CreateReport",
+				"codebuild:UpdateReport",
+				"codebuild:BatchPutTestCases",
+				"codebuild:*",
+				"codebuild:BatchPutCodeCoverages"
+			],
+			"Resource": [
+				"arn:aws:codebuild:your-region:your-aws-account-id:report-group/report-group-name-1"
+			]
+		}
+	]
+}
+POLICY
+}
+
+
+resource "aws_iam_role_policy_attachment" "build_pipeline" {
+  role       = aws_iam_role.build_role.name
+  policy_arn = aws_iam_policy.codebuild_policy.arn
+}
+
+
+resource "aws_iam_role" "codepipeline_role" {
+  name = "test-role"
+
+  assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
     {
-       "Effect": "Allow",
-       "Action": "codebuild:*",
-       "Resource": [
-          "${aws_codebuild_project.project.id}",
-          "${aws_codepipeline_project.project.id}"
-  
-       ]
-    },
-    {
       "Effect": "Allow",
-      "Resource": [
-        "*"
-      ],
+      "Principal": {
+        "Service": "codepipeline.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "codepipeline_policy" {
+  name = "codepipeline_policy"
+  role = aws_iam_role.codepipeline_role.name
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect":"Allow",
       "Action": [
-        "autoscaling:*",
-        "codebuild:*",
-        "codepipeline:*",
-        "ec2:*",
-        "elasticloadbalancing:*",
-        "iam:*",
-        "logs:*",
-        "rds:DescribeDBInstances",
-        "route53:*",
-        "s3:*"
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:GetBucketVersioning",
+        "s3:PutObject"
+      ],
+      "Resource": [
+        "${aws_s3_bucket.app_web.arn}",
+        "${aws_s3_bucket.app_web.arn}/*"
       ]
     },
     {
       "Effect": "Allow",
       "Action": [
-        "ssm:GetParameters",
-        "ssm:PutParameter"
+        "codebuild:BatchGetBuilds",
+        "codebuild:StartBuild",
+        "codedeploy:BatchGetApplicaions",
+        "codedeploy:BatchGetDeploymentGroups",
+        "codedeploy:BatchGetDeployments",
+        "codedeploy:CreateDeployment",
+        "codedeploy:ListDeploymentInstances"
+
       ],
-      "Resource": "arn:aws:ssm:us-east-2:${var.account_id}:parameter/*"
+      "Resource": "*"
+    },
+     
+    {
+      "Effect":"Allow",
+      "Action": [
+        "cloudwatch:*"
+      ],
+      "Resource": [
+        "*"
+      ]
     }
+
   ]
 }
-POLICY
+EOF
 }
+
+
+#resource "aws_iam_role_policy_attachment" "pipeline_attachment" {
+
+#   role = aws_iam_role.codepipeline_role.name
+#   policy_arn = aws_iam_role_policy.codepipeline_policy.id
+#}
