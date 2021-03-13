@@ -1,8 +1,8 @@
 resource "aws_codebuild_project" "project" {
-  name          =  var.project
+  name          = var.project
   description   = "${var.project} CodeBuild Project"
   build_timeout = "10"
-  service_role  = aws_iam_role.build_pipeline_role.arn
+  service_role  = aws_iam_role.build_role.arn
 
   environment {
     compute_type = "BUILD_GENERAL1_SMALL"
@@ -18,28 +18,30 @@ resource "aws_codebuild_project" "project" {
     git_submodules_config {
       fetch_submodules = true
     }
+
   }
-   
+
   source_version = "main" #master
-  
+
   tags = {
     Environment = "Test"
-  }  
-  
-  artifacts {
-    type = "NO_ARTIFACTS"
   }
-  
+
+  artifacts {
+    type     = "S3"
+    location = aws_s3_bucket.app_web.bucket
+ 
+  }
+
   cache {
     type     = "S3"
     location = aws_s3_bucket.app_web.bucket
-  }  
-  
+  }
+
   logs_config {
     cloudwatch_logs {
       status = "ENABLED"
     }
   }
-  
-}
 
+}
