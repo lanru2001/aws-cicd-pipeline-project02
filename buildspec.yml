@@ -6,7 +6,7 @@ phases:
       - "echo \"Entered the install phase ...\"" 
       - "echo \"Entered the build phase...\""
       - "echo \"Build started on'date'\""
-      - "find index.html"
+      - "find production.txt"
   pre_build: 
     commands: 
       - "echo \"Entered the pre_build phase ...\""    
