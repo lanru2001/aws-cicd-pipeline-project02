@@ -1,61 +1,22 @@
 
-#version: 0.0
-#os: linux
-#files:
-#  - source: Config/config.txt
-#    destination: /webapps/Config
-#  - source: source
-#    destination: /webapps/myApp
-#hooks:
-#  BeforeInstall:
-#    - location: Scripts/UnzipResourceBundle.sh
-#    - location: Scripts/UnzipDataBundle.sh
-#  AfterInstall:
-#    - location: Scripts/RunResourceTests.sh
-#      timeout: 180
-#  ApplicationStart:
-#    - location: Scripts/RunFunctionalTests.sh
-#      timeout: 3600
-#  ValidateService:
-#    - location: Scripts/MonitorService.sh
-#      timeout: 3600
-#      runas: codedeployuser
-#
-
-# This is an appspec.yml template file for use with an EC2/On-Premises deployment in CodeDeploy.
-
 version: 0.0
-# Specify "os: linux" if this revision targets Amazon Linux
 os: linux
-
 files:
-  - source: /
-    destination: /home/ec2-user/server
-
-permissions:
-  - object: /
-    pattern: "**"
-    owner: ec2-user
-    group: ec2-user
-
+  - source: Config/config.txt
+    destination: /webapps/Config
+  - source: source
+    destination: /webapps/myApp
 hooks:
-  # During the BeforeInstall deployment lifecycle event, run the commands
-  #   in the script specified in "location".
   BeforeInstall:
-    - location: index.html 
-      timeout: 1000
-      runas: root
-  # During the AfterInstall deployment lifecycle event, run the commands
-  #   in the script specified in "location".
+    - location: Scripts/UnzipResourceBundle.sh
+    - location: Scripts/UnzipDataBundle.sh
   AfterInstall:
-    - location: index.html 
-      timeout: 1600
-      runas: root
-
-  # During the ApplicationStart deployment lifecycle event, run the commands
-  #   in the script specified in "location".
+    - location: Scripts/RunResourceTests.sh
+      timeout: 180
   ApplicationStart:
-    - location: index.html 
-      timeout: 300
-      runas: root
-
+    - location: Scripts/RunFunctionalTests.sh
+      timeout: 3600
+  ValidateService:
+    - location: Scripts/MonitorService.sh
+      timeout: 3600
+      runas: codedeployuser
