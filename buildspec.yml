@@ -1,18 +1,19 @@
----
 version: 0.2
-phases:
-  build:
-    commands:
-      - "echo \"Entered the build phase...\""
-      - "echo \"Build started on'date'\""
-      - "find production.txt"
-  install:
-    commands:
-      - "echo \"Entered the install phase ...\""
-  pre_build:
-    commands:
-      - "echo \"Entered the pre_build phase ...\""
-  post_build:
-    commands:
-      - "echo \"Entered the post_build phase...\""
-      - "echo \"Build completed on 'date'\""
+
+phases: 
+    install:
+        commands:
+            - echo "Entered the install phase..."
+    pre_build:
+        commands: 
+            - echo "Entered the pre_build phase..."
+    build:
+        commands:
+            - echo "Entered the build phase..."
+            - echo "Build started on `date`"
+            - find production.txt
+    post_build:
+        commands:
+            - echo "Entered the post_build phase..."
+            - echo "Build completed on `date`"
+            
