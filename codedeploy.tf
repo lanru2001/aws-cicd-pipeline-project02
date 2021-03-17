@@ -8,42 +8,42 @@ resource "aws_codedeploy_deployment_config" "application_deploy" {
   compute_platform       = "Server"
   minimum_healthy_hosts {
     type  = "HOST_COUNT"
-    value = 2
+    value = 4
   }
 }
 
 resource "aws_codedeploy_deployment_group" "app_deploy" {
   app_name               = aws_codedeploy_app.application_deploy.name
   deployment_group_name  = var.group_name
-  service_role_arn       = aws_iam_role.deploy_role.arn  
+  service_role_arn       = aws_iam_role.deploy_role.arn
   deployment_config_name = aws_codedeploy_deployment_config.application_deploy.id
-  
+
   deployment_style {
     deployment_option = "WITH_TRAFFIC_CONTROL"
     deployment_type   = "BLUE_GREEN"
   }
-  
+
   blue_green_deployment_config {
     deployment_ready_option {
-       action_on_timeout    = "STOP_DEPLOYMENT"
-       wait_time_in_minutes = 60
-    }
+      action_on_timeout    = "STOP_DEPLOYMENT"
+      wait_time_in_minutes = 60
+  }
   
-    green_fleet_provisioning_option {
-      action = "DISCOVER_EXISTING"
-    }
-
-    terminate_blue_instances_on_deployment_success {
+  green_fleet_provisioning_option {
+      action = "COPY_AUTO_SCALING_GROUP"
+  }
+  
+  terminate_blue_instances_on_deployment_success {
       action = "KEEP_ALIVE"
-    }
+      }
   }
 
   ec2_tag_set {
     ec2_tag_filter {
-      key   = "Name" # key and value of your ec2 instance tag 
+      key   = "aws:autoscaling:groupName" # key and value of your ec2 instance tag 
       type  = "KEY_AND_VALUE"
-      value = "web_server_auto"
-   
+      value = "my-autoscaling-group"
+
     }
 
     ec2_tag_filter {
@@ -51,14 +51,23 @@ resource "aws_codedeploy_deployment_group" "app_deploy" {
       type  = "KEY_AND_VALUE"
       value = "web_server"
     }
- 
+
+    ec2_tag_filter {
+      key   = "Name"
+      type  = "KEY_AND_VALUE"
+      value = "app-server"
+    }
+
   }
 
-  #load_balancer_info {    #Research how to include load balancer info 
-  #  elb_info {
-  #    name = aws_elb.example.name
-  #}
+  load_balancer_info {
+    elb_info {
+      name = aws_lb.my_alb.name
+    }
+  }
 
+  autoscaling_groups = [ aws_autoscaling_group.my_autoscaling_group.name  ]
+  
   #trigger_configuration {
   #  trigger_events     = ["DeploymentFailure"]
   #  trigger_name       = "app_deploy-trigger"
