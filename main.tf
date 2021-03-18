@@ -1,7 +1,7 @@
 data "aws_availability_zones" "available" {}
 
-resource "aws_key_pair" "deployer" {
-  key_name   = "deployer-key"
+resource "aws_key_pair" "mykeypair" {
+  key_name   = "mykeypair"
   public_key = file(var.PATH_TO_PUBLIC_KEY)
 }
 
@@ -101,7 +101,7 @@ resource "aws_security_group" "instance" {
 resource "aws_instance" "webserver" {
   ami                    = var.AMI
   instance_type          = var.instance_type
-  key_name               = aws_key_pair.deployer.key_name
+  key_name               = aws_key_pair.mykeypair.key_name
   vpc_security_group_ids = ["${aws_security_group.instance.id}"]
   user_data              = file("userdata.sh")
   lifecycle {
@@ -130,12 +130,21 @@ resource "aws_instance" "webserver" {
 # attach the previous availability zones' subnets into this load balancer.
 resource "aws_lb" "my_alb" {
   name               = "my-alb"
+  enable_deletion_protection = true
   internal           = false         # set lb for public access
   load_balancer_type = "application" # use Application Load Balancer
   security_groups    = [aws_security_group.my_alb_security_group.id]
   subnets = [
     aws_subnet.public-subnets[0].id, aws_subnet.public-subnets[1].id, aws_subnet.public-subnets[2].id
   ]
+  tags = {
+    Environment = "Dev"
+  }
+  access_logs {
+    bucket  = aws_s3_bucket.alb.bucket
+    enabled = false
+  }
+
 }
 
 # prepare a security group for our load balancer my_alb.
@@ -179,7 +188,7 @@ resource "aws_launch_configuration" "my_launch_configuration" {
   # Amazon Linux 2 AMI (HVM), SSD Volume Type (ami-0f02b24005e4aec36).
   image_id        = var.AMI
   instance_type   = var.instance_type
-  key_name        = aws_key_pair.deployer.key_name
+  key_name        = aws_key_pair.mykeypair.key_name
   security_groups = [aws_security_group.my_launch_config_security_group.id, ]
 
   # set to false on all  stage.Otherwise true, because ssh access might be needed to the instance.
@@ -236,10 +245,10 @@ resource "aws_autoscaling_attachment" "my_aws_autoscaling_attachment" {
 # define the autoscaling group attach my_launch_configuration into this newly created autoscaling group below.
 resource "aws_autoscaling_group" "my_autoscaling_group" {
   name              = "my-autoscaling-group"
-  desired_capacity  = 2 # ideal number of instance alive
-  min_size          = 2 # min number of instance alive
-  max_size          = 3 # max number of instance alive
-  health_check_type = "ELB"
+  desired_capacity  = 1     # ideal number of instance alive
+  min_size          = 1     # min number of instance alive
+  max_size          = 2     # max number of instance alive
+  health_check_type = "EC2" #"ELB"
 
   # allows deleting the autoscaling group without waiting
   # for all instances in the pool to terminate
@@ -282,3 +291,4 @@ resource "aws_cloudwatch_metric_alarm" "ec2_cpu" {
     InstanceId = aws_instance.webserver.id
   }
 }
+
