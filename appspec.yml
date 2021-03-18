@@ -1,22 +1,39 @@
 
+
+# This is an appspec.yml template file for use with an EC2/On-Premises deployment in CodeDeploy.
+
 version: 0.0
+# Specify "os: linux" if this revision targets Amazon Linux
 os: linux
+
 files:
-  - source: Config/config.txt
-    destination: /webapps/Config
-  - source: source
-    destination: /webapps/myApp
+  - source: /
+    destination: /home/ec2-user/server
+
+permissions:
+  - object: /
+    pattern: "**"
+    owner: ec2-user
+    group: ec2-user
+
 hooks:
+  # During the BeforeInstall deployment lifecycle event, run the commands
+  #   in the script specified in "location".
   BeforeInstall:
-    - location: Scripts/UnzipResourceBundle.sh
-    - location: Scripts/UnzipDataBundle.sh
+    - location: index.html 
+      timeout: 1000
+   
+  # During the AfterInstall deployment lifecycle event, run the commands
+  #   in the script specified in "location".
   AfterInstall:
-    - location: Scripts/RunResourceTests.sh
-      timeout: 180
+    - location: index.html 
+      timeout: 1600
+ 
+
+  # During the ApplicationStart deployment lifecycle event, run the commands
+  #   in the script specified in "location".
   ApplicationStart:
-    - location: Scripts/RunFunctionalTests.sh
-      timeout: 3600
-  ValidateService:
-    - location: Scripts/MonitorService.sh
-      timeout: 3600
-      runas: codedeployuser
+    - location: index.html 
+      timeout: 300
+
+
