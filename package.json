@@ -1,9 +1,11 @@
+
+
 {
-	"name": "EC2-Linux-Sample-App",
-	"version": "0.0.1",
-	"private": true,
-	"dependencies": {},
-	"scripts": {
-		"start": "node app.js"
-	}
+  "name": "EC2-Sample-App",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {"async": "2.5.x"},
+  "scripts": {
+    "start": "node app.js"
+  }
 }
