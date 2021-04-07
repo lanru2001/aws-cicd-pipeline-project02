@@ -7,8 +7,9 @@ resource "aws_key_pair" "mykeypair" {
 
 
 resource "aws_vpc" "app-vpc" {
-  cidr_block = var.vpc-cidr # Check how to dynamically set cidr_block 
-
+  cidr_block           = var.vpc-cidr # Check how to dynamically set cidr_block 
+  enable_dns_support   = true
+   enable_dns_hostname = true 
   tags = {
     Name = "app-vpc"
   }
@@ -63,6 +64,21 @@ resource "aws_route_table" "public-rtable" {
   depends_on = [aws_internet_gateway.app-igw]
 }
 
+#route table for private subnet
+resource "aws_route_table" "private-rtable" {
+  vpc_id = aws_vpc.app-vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.app-igw.id
+  }
+
+  tags = {
+    Name = "app-public-rtable"
+  }
+
+  depends_on = [aws_internet_gateway.app-igw]
+}
 
 #route table association public subnets
 resource "aws_route_table_association" "public-subnet-association" {
@@ -70,6 +86,14 @@ resource "aws_route_table_association" "public-subnet-association" {
   subnet_id      = element(aws_subnet.public-subnets[0].*.id, count.index)
   route_table_id = aws_route_table.public-rtable.id
 }
+
+#route table association private subnets
+resource "aws_route_table_association" "private-subnet-association" {
+  count          = length(var.private-subnets[0])
+  subnet_id      = element(aws_subnet.private-subnets[0].*.id, count.index)
+  route_table_id = aws_route_table.private-rtable.id
+}
+
 
 resource "aws_security_group" "instance" {
   name        = "test-sg"
