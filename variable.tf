@@ -43,11 +43,11 @@ variable "azs" {
   type = list
 }
 
-variable "public_subnets" {
+variable "public_subnets_cidr" {
   type = list
 }
 
-variable "private_subnets" {
+variable "private_subnets_cidr" {
   type = list
 }
 variable "account_name" {
