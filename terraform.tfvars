@@ -32,5 +32,4 @@ name                            = "topmanlanrey"
 namespace                       = "topman"
 environment                     = "pipeline"
 stage                           = "dev"
-aws_region                      = "us-east-2"
 azs                             = ["us-east-2a" , "us-east-2b"]
