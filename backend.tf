@@ -1,12 +1,10 @@
+# S3 remote state 
 terraform {
-  backend "s3" {
-    bucket = "my-remote-bucket-one"
-    key    = "project/my-terraform"
-    region = "us-east-2"
+ backend "s3" {
+    bucket         = "pipeline-project"  
+    key            = "project/ecs"
+    region         = "us-east-2"
+    dynamodb_table = "lightfeather_dynamodb"
 
-  }
-
-
-
-
-}
+ }
+}  
