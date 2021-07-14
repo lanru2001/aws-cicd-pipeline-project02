@@ -1,19 +1,30 @@
-      
+# AppSpec resource section for Amazon ECS deployments 
+# Adjust all the values to your new ECS Deployment
+
 version: 0.0
-os: linux
-files:
-  - source: /
-    destination: /var/www/html/
-hooks:
-  BeforeInstall:
-    - location: script/install_dependencies.sh
-      timeout: 300
-      runas: root
-    - location: script/start_server.sh
-      timeout: 300
-      runas: root
-  ApplicationStop:
-    - location: script/stop_server.sh
-      timeout: 300
-      runas: root
-      
+resources: 
+  ecs-service-specifications
+hooks: 
+  deployment-lifecycle-event-mappings
+Resources:
+  - TargetService:
+      Type: AWS::ECS::Service
+      Properties:
+        TaskDefinition: "task-definition-ARN"
+        LoadBalancerInfo: 
+          ContainerName: "ECS-container-name-for-your-ECS-application" 
+          ContainerPort: port-used-by-your-ECS-application
+# Optional properties
+        PlatformVersion: "ecs-service-platform-version"
+        NetworkConfiguration:
+          AwsvpcConfiguration:
+            Subnets: ["ecs-subnet-1","ecs-subnet-n"] 
+            SecurityGroups: ["ecs-security-group-1","ecs-security-group-n"] 
+            AssignPublicIp: "ENABLED-or-DISABLED"
+        CapacityProviderStrategy:
+          - Base: Integer
+            CapacityProvider: "capacityProviderA"
+            Weight: Integer
+          - Base: Integer
+            CapacityProvider: "capacityProviderB"
+            Weight: Integer
