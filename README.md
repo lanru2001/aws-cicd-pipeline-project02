@@ -1,6 +1,8 @@
 # aws-cicd-pipeline-project
 
-Dockerizing the App We use the multi-stage builds for efficient docker images. Building efficient Docker images are very important for faster downloads and lesser surface attacks. In this multi-stage build, building a React app and put those static assets in the build folder is the first step. The second step involves taking those static build files and serve those with node server.
+Use the multi-stage builds for efficient docker images to dockerize the App. Building efficient Docker images are very important for faster downloads and lesser surface attacks.
+
+In this multi-stage build, building a React app and put those static assets in the build folder is the first step. The second step involves taking those static build files and serve those with node server.
 
 Stage 1:
 
@@ -15,6 +17,7 @@ Copy all the source files.
 Install all the dependencies.
 
 Run npm run build to build the React App and all the assets will be created under build a folder within a my-app folder.
+
 
 Stage 2:
 
