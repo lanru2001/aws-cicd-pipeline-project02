@@ -24,18 +24,7 @@ phases:
       - docker push $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo Writing image definitions file...
-      - printf '[{"name":"node-test","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - printf '[{"name":"nodeapp","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
       - cat imagedefinitions.json 
 artifacts:
-  files:
-    - api/server.js
-    - api/package.json
-    - api/package-lock.json
-    - node_modules/async/*
-    - node_modules/lodash/*
-    - appspec.yml
-    - Dockerfile
-    - imagedefinitions.json
-    - my-app/src/App.js 
-    - my-app/src/
-
+    files: imagedefinitions.json
