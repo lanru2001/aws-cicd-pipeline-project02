@@ -1,12 +1,10 @@
 FROM node:10 AS ui-build
 WORKDIR /usr/src/app
-COPY my-app/ .
-RUN npm install && npm run build
+COPY my-app/  /usr/src/app
 
 FROM node:10 AS server-build
 WORKDIR /root/
-COPY --from=ui-build /usr/src/app/my-app/build ./my-app/build
-COPY api/package*.json .
+COPY api/package*.json  .
 RUN  npm install
 COPY api/server.js ./api/
 
