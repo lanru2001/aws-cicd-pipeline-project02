@@ -1,11 +1,13 @@
 FROM node:14-alpine 
 
 WORKDIR /usr/src/app
-COPY my-app/  /usr/src/app/
-COPY api/  /usr/src/app/
-COPY api/server.js /usr/src/app/
+COPY my-app/   .
+COPY my-app/src  .
+COPY my-app/public  .
+COPY api/   .
+COPY api/server.js  .
 
-COPY api/package*.json  /usr/src/app/
+COPY api/package*.json  .
 RUN  npm install && npm run build
 
 EXPOSE 80
