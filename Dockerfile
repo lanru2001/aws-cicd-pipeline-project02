@@ -8,7 +8,7 @@ COPY api/  /usr/src/app/
 COPY api/server.js /usr/src/app/
 
 COPY api/package*.json  /usr/src/app/
-RUN cd/usr/src/app && npm install && npm run build
+RUN cd /usr/src/app/ && npm install && npm run build
 
 EXPOSE 80
 
