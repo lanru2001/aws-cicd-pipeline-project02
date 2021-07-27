@@ -1,12 +1,12 @@
-FROM node:10 AS ui-build
+FROM node:14-alpine 
+
 WORKDIR /usr/src/app
 COPY my-app/  /usr/src/app/
+COPY api/  /usr/src/app/
+COPY api/server.js /usr/src/app/
 
-FROM node:10 AS server-build
-WORKDIR /root/
-COPY api/package*.json  ./
-RUN  npm install
-COPY api/server.js ./api/
+COPY api/package*.json  /usr/src/app/
+RUN  npm install && npm run build
 
 EXPOSE 80
 
